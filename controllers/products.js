@@ -10,9 +10,20 @@ const getAllProductsStatic = async(req, res) => {
         nbHits: allProducts.length
     })
 }
+
 const getAllProducts = async(req, res) => {
-    const allProducts = await Product_model.find()
-    if(!allProducts) return res.status(404).json({message: "No product found"})
+    const { featured } = req.query
+    const queryObject = {}
+    if(featured){
+        queryObject.featured = featured === "true"? true:false
+    }
+    console.log(queryObject)
+
+
+    const allProducts = await Product_model.find(queryObject)
+    if(!allProducts || allProducts.length === 0) {
+        return res.status(404).json({message: "No product found"})
+    }
 
     res.status(200).json({
         success:true, 
